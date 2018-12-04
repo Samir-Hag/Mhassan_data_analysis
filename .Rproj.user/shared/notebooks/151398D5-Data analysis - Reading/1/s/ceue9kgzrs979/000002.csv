@@ -1,0 +1,1 @@
+"0","Pros <- read.csv(file.choose(), header = T, sep = "","") # 3. Reading Prosody"

@@ -1,0 +1,1 @@
+"0","Acc <- read.csv(file.choose(), header = T, sep = "","") # 1. Accuracy data"

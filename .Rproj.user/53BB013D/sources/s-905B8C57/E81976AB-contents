@@ -1,0 +1,900 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
+# Importing data
+data will be imported:
+
+
+1- Reading accurecy data
+```{r, echo=FALSE,}
+Acc <- read.csv(file.choose(), header = T, sep = ",")
+```
+
+
+2-Reading Automaticity
+```{r, echo=FALSE}
+Auto <- read.csv(file.choose(), header = T, sep = ",")
+```
+
+
+3-Reading Prosody
+```{r, echo=FALSE}
+Pros <- read.csv(file.choose(), header = T, sep = ",")
+```
+
+
+# Chack variables type/class
+
+```{r, echo=FALSE, results='hide'}
+class(Acc$Group)
+class(Auto$Group)
+class(Pros$Group)
+```
+
+
+
+now all "Group" has been converted into categorical data
+
+```{r, echo=FALSE, results='hide'}
+levels(Acc$Group)
+levels(Auto$Group)
+levels(Pros$Group)
+```
+
+```{r, echo=FALSE, results='hide'}
+summary(Acc)
+summary(Auto)
+summary(Pros)
+```
+
+
+# 
+
+1-For Reading Accuracy
+```{r, echo=FALSE, results='hide'}
+attach(Acc)
+```
+
+
+
+```{r, echo=FALSE}
+boxplot(pre~Group, main="Pre-Test",ylab="Scores")
+boxplot(post~Group, main= "Post-Test",ylab="Scores")
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc)
+```
+
+
+2- For Reading Automaticity
+```{r, echo=FALSE, results='hide'}
+attach(Auto)
+```
+
+```{r, echo=FALSE}
+boxplot(pre~Group, main="Pre-Test",ylab="Scores")
+boxplot(post~Group, main= "Post-Test",ylab="Scores")
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto)
+```
+
+
+3- For Reading Prosody
+
+```{r, echo=FALSE, results='hide'}
+attach(Pros)
+```
+
+
+```{r, echo=FALSE}
+boxplot(pre~Group, main="Pre-Test",ylab="Scores")
+boxplot(post~Group, main= "Post-Test",ylab="Scores")
+```
+
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros)
+```
+
+***********
+
+## 2. Subsetting the data
+
+First subsetting the data according to the following Groups
+* 1. _Control / Experiment_. and this subset will be used to answer whether there is a difference within the groups
+* 2. _Control compared with Experiment_ for pre and post test, to deciede whether there is a difference between the groups
+
+
+### A. Control / Experiment Susbsetting (difference within Groups)
+
+#### I. for the Accuracy test
+
+```{r, echo=FALSE, results='hide'}
+attach(Acc)
+```
+
+for the control
+```{r, echo=FALSE,results='hide'}
+Acc2pCont <- Acc[Group=="Control", ]
+```
+
+
+for the experiment
+```{r, echo=FALSE, results='hide'}
+Acc2pExp <- Acc[Group=="Experiment", ]
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc)
+```
+
+
+#### II. for the Automaticity test
+
+
+```{r, echo=FALSE, results='hide'}
+attach(Auto)
+```
+
+for the control
+```{r, echo=FALSE, results='hide'}
+Auto2pCont <- Auto[Group=="Control", ]
+```
+
+
+for the experiment
+```{r, echo=FALSE, results='hide'}
+Auto2pExp <- Auto[Group=="Experiment", ]
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto)
+```
+
+
+#### III. for the Prosopy test
+
+
+```{r, echo=FALSE, results='hide'}
+attach(Pros)
+```
+
+for the control
+```{r, echo=FALSE, results='hide'}
+Pros2pCont <- Pros[Group=="Control", ]
+```
+
+
+for the experiment
+```{r, echo=FALSE, results='hide'}
+Pros2pExp <- Pros[Group=="Experiment", ]
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros)
+```
+
+
+
+### B. Control Vs Experiment Susbsetting (difference Between Groups)
+
+
+#### I. for Accuracy
+
+```{r, echo=FALSE, results='hide'}
+attach(Acc)
+```
+
+```{r, echo=FALSE, results='hide'}
+AccPre <- Acc[ ,c("Group", "pre")]
+```
+
+```{r, echo=FALSE, results='hide'}
+AccPost <- Acc[ , c("Group", "post")]
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc)
+```
+
+
+#### II. For Automaticity
+
+```{r, echo=FALSE, results='hide'}
+attach(Auto)
+```
+
+```{r, echo=FALSE, results='hide'}
+AutoPre <- Auto[ ,c("Group", "pre")]
+```
+
+```{r, echo=FALSE, results='hide'}
+AutoPost <- Auto[ , c("Group", "post")]
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto)
+```
+
+#### III. For Prosody
+
+```{r, echo=FALSE, results='hide'}
+attach(Pros)
+```
+
+```{r, echo=FALSE, results='hide'}
+ProsPre <- Pros[ ,c("Group", "pre")]
+```
+
+```{r, echo=FALSE, results='hide'}
+ProsPost <- Pros[ , c("Group", "post")]
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros)
+```
+
+
+*******
+
+# Normaility Tests
+the normality test were applied to check whether the data are normaly distributed or not. The normaility test was conducted through:
+* 1. Q-Q plot
+* 2. shapiro test
+* 2. Levene's test _ for variance homogeneity_ (for independet variables)
+* 3. difference between score normality test (for repeated variables)
+
+*******
+
+## 1. Q-Q plot
+
+#### A. For Reading Accuracy 
+##### I. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pCont)
+```
+
+```{r, echo=FALSE}
+qqnorm(Acc2pCont$pre, main = "Normal Q-Q PLot for Reading Acuracy Pre-test- Control")
+abline(mean(Acc2pCont$pre),sd(Acc2pCont$pre))
+qqnorm(Acc2pCont$post, main = "Normal Q-Q PLot for Reading Acuracy Post-test - Control")
+abline(mean(Acc2pCont$post),sd(Acc2pCont$post))
+```
+
+```{r, echo=FALSE}
+hist(pre)
+hist(post)
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pCont)
+```
+
+##### II. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pExp)
+```
+
+```{r, echo=FALSE}
+qqnorm(Acc2pExp$pre, main = "Normal Q-Q PLot for Reading Acuracy Pre-test - Experiment")
+abline(mean(Acc2pExp$pre),sd(Acc2pExp$pre))
+qqnorm(Acc2pExp$post, main = "Normal Q-Q PLot for Reading Acuracy Post-test - Experiment")
+abline(mean(Acc2pExp$post),sd(Acc2pExp$post))
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pExp)
+```
+
+#### B. For Reading Automaticity
+##### I. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pCont)
+```
+
+```{r, echo=FALSE}
+qqnorm(Auto2pCont$pre, main = "Normal Q-Q PLot for Reading Automaticity Pre-test - Control")
+abline(mean(Auto2pCont$pre),sd(Auto2pCont$pre))
+qqnorm(Auto2pCont$post, main = "Normal Q-Q PLot for Reading Automaticity Post-test - Control")
+abline(mean(Auto2pCont$post),sd(Auto2pCont$post))
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pCont)
+```
+
+
+##### II. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pExp)
+```
+
+```{r, echo=FALSE}
+qqnorm(Auto2pExp$pre, main = "Normal Q-Q PLot for Reading Automaticity Pre-test - Experiment")
+abline(mean(Auto2pExp$pre),sd(Auto2pExp$pre))
+qqnorm(Auto2pExp$post, main = "Normal Q-Q PLot for Reading Automaticity Post-test - Experiment")
+abline(mean(Auto2pExp$post),sd(Auto2pExp$post))
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pExp)
+```
+
+
+#### C. For Reading Prosody
+##### I. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pCont)
+```
+
+```{r, echo=FALSE}
+qqnorm(Pros2pCont$pre, main = "Normal Q-Q PLot for Reading Prosody Pre-test - Control")
+abline(mean(Pros2pCont$pre),sd(Pros2pCont$pre))
+qqnorm(Pros2pCont$post, main = "Normal Q-Q PLot for Reading Prosody Post-test - Control")
+abline(mean(Pros2pCont$post),sd(Pros2pCont$post))
+```
+
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pCont)
+```
+
+
+##### II. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pExp)
+```
+
+```{r, echo=FALSE}
+qqnorm(Pros2pExp$pre, main = "Normal Q-Q PLot for Reading Prosody Pre-test - Experiment")
+abline(mean(Pros2pExp$pre),sd(Pros2pExp$pre))
+qqnorm(Pros2pExp$post, main = "Normal Q-Q PLot for Reading Prosody Post-test - Experiment")
+abline(mean(Pros2pExp$post),sd(Pros2pExp$post))
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pExp)
+```
+
+*******
+
+## 2. Shapiro Test
+this test aims to test whether the data are N.D. or not
+
+### A. Reading Accuracy 
+#### I. _Control_
+```{r, echo=FALSE}
+attach(Acc2pCont)
+shapiro.test(Acc2pCont$pre)
+shapiro.test(Acc2pCont$post)
+detach(Acc2pCont)
+```
+
+#### II. _Experiment_
+
+```{r, echo=FALSE}
+attach(Acc2pExp)
+shapiro.test(Acc2pExp$pre)
+shapiro.test(Acc2pExp$post)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pExp)
+```
+
+
+### B. Reading Automaticity 
+#### I. _Control_
+```{r, echo=FALSE}
+attach(Auto2pCont)
+shapiro.test(Auto2pCont$pre)
+shapiro.test(Auto2pCont$post)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pCont)
+```
+
+#### II. _Experiment_
+```{r, echo=FALSE}
+attach(Auto2pExp)
+shapiro.test(Auto2pExp$pre)
+shapiro.test(Auto2pExp$post)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pExp)
+```
+
+### B. Reading Prosody 
+#### I. _Control_
+```{r, echo=FALSE}
+attach(Pros2pCont)
+shapiro.test(Pros2pCont$pre)
+shapiro.test(Pros2pCont$post)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pCont)
+```
+
+#### II. _Experiment_
+
+```{r, echo=FALSE}
+attach(Pros2pExp)
+shapiro.test(Pros2pExp$pre)
+shapiro.test(Pros2pExp$post)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pExp)
+```
+
+
+*****
+
+## 3. Levene's Test for variance homogeneity
+
+Levene's test is used to evaluate the normality of distribution between two independent variables _e.g. Control Vs Experiment_ , and not repeated variable.
+
+```{r, echo=FALSE, results='hide'}
+##install.packages("car")
+library(car)
+```
+
+### A. Reading Accuracy 
+#### I. _Pre-test_
+```{r, echo=FALSE, results='hide'}
+attach(AccPre)
+```
+
+```{r, echo=FALSE}
+leveneTest(pre[Group=="Control"], pre[Group=="Experiment"])
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(AccPre)
+```
+
+#### II. _post-test_
+```{r, echo=FALSE, results='hide'}
+attach(AccPost)
+```
+
+```{r, echo=FALSE}
+leveneTest(post[Group=="Control"], post[Group=="Experiment"])
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(AccPost)
+```
+
+
+### B. Reading Automaticity
+#### I. _pre-test_
+
+```{r, echo=FALSE}
+attach(AutoPre)
+leveneTest(pre[Group=="Control"], pre[Group=="Experiment"])
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(AutoPre)
+```
+
+
+#### II. _post-test_
+```{r, echo=FALSE}
+attach(AutoPost)
+leveneTest(post[Group=="Control"], post[Group=="Experiment"])
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(AutoPost)
+```
+
+### C. Reading Prosody 
+#### I. _pre-test_
+```{r, echo=FALSE}
+attach(ProsPre)
+leveneTest(pre[Group=="Control"], pre[Group=="Experiment"])
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(ProsPre)
+```
+
+#### II. _post-test_
+```{r, echo=FALSE}
+attach(ProsPost)
+leveneTest(post[Group=="Control"], post[Group=="Experiment"])
+```
+```{r, echo=FALSE, results='hide'}
+detach(ProsPost)
+```
+
+********
+
+## 4. Difference between scores normality test
+this test is used to assess the normailty distribution of repeated variables and used as a pre-normality test before selecting Wilcoxson's singled rank test
+
+### A. Reading Accuracy
+#### I. _Control_
+
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pCont)
+```
+
+
+```{r, echo=FALSE}
+Acc2pCont$Diff <- (post-pre)
+str(Acc2pCont)
+```
+
+```{r, echo=FALSE}
+qqnorm(Acc2pCont$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Control")
+abline(mean(Acc2pCont$Diff),sd(Acc2pCont$Diff))
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pCont)
+```
+
+
+#### II. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pExp)
+```
+
+
+```{r, echo=FALSE, results='hide'}
+Acc2pExp$Diff <- (post-pre)
+str(Acc2pExp)
+```
+
+```{r, echo=FALSE}
+qqnorm(Acc2pExp$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Experiment")
+abline(mean(Acc2pExp$Diff),sd(Acc2pExp$Diff))
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pExp)
+```
+
+
+### B. Reading Automaticity
+#### I. _Control_
+
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pCont)
+```
+
+
+```{r, echo=FALSE}
+Auto2pCont$Diff <- (post-pre)
+str(Auto2pCont)
+```
+
+
+```{r, echo=FALSE}
+qqnorm(Auto2pCont$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Experiment")
+abline(mean(Auto2pCont$Diff),sd(Auto2pCont$Diff))
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pCont)
+```
+
+
+#### II. _Experiment_
+
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pExp)
+```
+
+
+```{r, echo=FALSE}
+Auto2pExp$Diff <- (post-pre)
+str(Auto2pExp)
+```
+
+
+```{r, echo=FALSE}
+qqnorm(Auto2pExp$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Experiment")
+abline(mean(Auto2pExp$Diff),sd(Auto2pExp$Diff))
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pExp)
+```
+
+
+
+### C. Reading Prosody
+#### I. _Control_
+
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pCont)
+```
+
+
+```{r, echo=FALSE}
+Pros2pCont$Diff <- (post-pre)
+str(Pros2pCont)
+```
+
+
+
+```{r, echo=FALSE}
+qqnorm(Pros2pCont$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Experiment")
+abline(mean(Pros2pCont$Diff),sd(Pros2pCont$Diff))
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pCont)
+```
+
+
+#### II. _Experiment_
+
+
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pExp)
+```
+
+
+```{r, echo=FALSE}
+Pros2pExp$Diff <- (post-pre)
+str(Pros2pExp)
+```
+
+
+```{r, echo=FALSE}
+qqnorm(Pros2pExp$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Experiment")
+abline(mean(Pros2pExp$Diff),sd(Pros2pExp$Diff))
+```
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pExp)
+```
+
+**************
+## Hypothesis tests:
+### 1. Mann Whitney U test
+the H0: is that there is no significant difference between the control or the Experimental groups
+
+#### A. Hypothesis testing for the _Pre-Test_
+H0: no difference in the pre-test scores between the control and the Experiment group (this is the required result)
+
+##### I.Reading Accuracy
+```{r, echo=FALSE, results='hide'}
+attach(AccPre)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(AccPre)
+```
+
+Effect Size:..................
+
+#### II. Reading Automaticity
+
+```{r, echo=FALSE, results='hide'}
+attach(AutoPre)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(AutoPre)
+```
+
+
+
+
+#### III. Reading Prosody
+
+```{r, echo=FALSE, results='hide'}
+attach(ProsPre)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(ProsPre)
+```
+
+
+
+
+
+#### B. Hypothesis testing for the _Post-Test_
+H0: no difference in the pre-test scores between the control and the Experiment group (this is not the required result).if H0 was true, this will indicate that the intervention had no effect
+
+###### I. Reading Accuracy
+```{r, echo=FALSE, results='hide'}
+attach(AccPost)
+```
+
+```{r, echo=FALSE}
+wilcox.test(post~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(AccPost)
+```
+
+Effect Size:......................
+
+
+#### II. Reading Automaticity
+
+```{r, echo=FALSE, results='hide'}
+attach(AutoPost)
+```
+
+```{r, echo=FALSE}
+wilcox.test(post~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(AutoPost)
+```
+
+Effect Size:......................
+
+
+
+#### III. Reading Prosody
+
+```{r, echo=FALSE, results='hide'}
+attach(ProsPost)
+```
+
+```{r, echo=FALSE}
+wilcox.test(post~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(ProsPost)
+```
+
+Effect Size:......................
+
+
+*************
+
+### 2. Wilcoxson's single Rank Test
+the H0: is that ther is no difference between the pre and post test for control or Experiments
+
+I.Reading Accuracy
+##### A. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pCont)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre, post,  mu=0, alt="two.sided",conf.int=T, conf.level=0.99, paired=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pCont)
+```
+
+
+###### B. _Experiment_
+
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pExp)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre, post,  mu=0, alt="two.sided",conf.int=T, conf.level=0.99, paired=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pExp)
+```
+
+Effect Size:......................
+
+#### II. Reading Automaticity
+
+###### _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pCont)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre, post, mu=0, alt="two.sided",conf.int=T, conf.level=0.99, paired=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pCont)
+```
+
+
+###### B. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pExp)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre, post, mu=0, alt="two.sided",conf.int=T, conf.level=0.99, paired=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pExp)
+```
+
+Effect Size:......................
+
+
+#### III. Reading Prosody
+
+###### A. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pCont)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre, post, mu=0, alt="two.sided",conf.int=T, conf.level=0.99, paired=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pCont)
+```
+
+
+###### B. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pExp)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre, post, mu=0, alt="two.sided",conf.int=T, conf.level=0.99, paired=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pExp)
+```
+
+
+Effect Size:......................
+
+
+
+
+
+
+
+
+
+
+

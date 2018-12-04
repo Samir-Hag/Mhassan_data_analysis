@@ -1,0 +1,38 @@
+"0","install.packages(""car"")"
+"1","Warning in "
+"1","install.packages"
+"1"," :
+  "
+"1","unable to access index for repository https://cran.rstudio.com/src/contrib:
+  cannot open URL 'https://cran.rstudio.com/src/contrib/PACKAGES'"
+"1","
+"
+"2","Installing package into ‘C:/Users/Dr.Samir/Documents/R/win-library/3.5’
+(as ‘lib’ is unspecified)
+"
+"1","Warning in "
+"1","install.packages"
+"1"," :
+  "
+"1","unable to access index for repository https://cran.rstudio.com/src/contrib:
+  cannot open URL 'https://cran.rstudio.com/src/contrib/PACKAGES'"
+"1","
+"
+"1","Warning in "
+"1","install.packages"
+"1"," :
+  "
+"1","package â€˜carâ€™ is not available (for R version 3.5.1)"
+"1","
+"
+"1","Warning in "
+"1","install.packages"
+"1"," :
+  "
+"1","unable to access index for repository https://cran.rstudio.com/bin/windows/contrib/3.5:
+  cannot open URL 'https://cran.rstudio.com/bin/windows/contrib/3.5/PACKAGES'"
+"1","
+"
+"0","library(car)"
+"2","Loading required package: carData
+"

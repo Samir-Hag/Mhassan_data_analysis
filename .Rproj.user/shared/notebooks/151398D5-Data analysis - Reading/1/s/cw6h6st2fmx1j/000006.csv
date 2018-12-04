@@ -1,0 +1,7 @@
+"0","## 2. Subsetting the data"
+"0","#First subsetting the data according to the following Groups"
+"0","#* 1. _Control / Experiment_. and this subset will be used to answer whether there is a difference within the groups"
+"0","#* 2. _Control compared with Experiment_ for pre and post test, to deciede whether there is a difference between the groups"
+"0","### A. Control / Experiment Susbsetting (difference within Groups)"
+"0","#### I. for the Accuracy test"
+"0","attach(Acc)"

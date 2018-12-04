@@ -1,0 +1,1 @@
+"0","abline(mean(Auto2pCont$pre),sd(Auto2pCont$pre))"

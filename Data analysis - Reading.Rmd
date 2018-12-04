@@ -1,0 +1,1036 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r, echo=FALSE,}
+Acc <- read.csv(file.choose(), header = T, sep = ",") # 1. Accuracy data
+```
+
+
+```{r, echo=FALSE}
+Auto <- read.csv(file.choose(), header = T, sep = ",") # 2. Automaticity data
+```
+
+
+```{r, echo=FALSE}
+Pros <- read.csv(file.choose(), header = T, sep = ",") # 3. Reading Prosody
+```
+
+```{r, echo=FALSE, results='hide'}
+class(Acc$Group) # Chack variables type/class
+class(Auto$Group)
+class(Pros$Group)
+```
+
+```{r, echo=FALSE, results='hide'}
+levels(Acc$Group) # now all "Group" has been converted into categorical data
+levels(Auto$Group)
+levels(Pros$Group)
+```
+## 1- Data structure and distribution
+in this section, the data statistical summary and the distribution of the data was evaluated
+
+### A. Data summary
+
+```{r, echo=FALSE}
+summary(Acc)
+summary(Auto)
+summary(Pros)
+```
+
+
+
+### B. Data Distribution:
+Here the data distribution was checked using Boxplot 
+
+1-For Reading Accuracy
+```{r, echo=FALSE, results='hide'}
+attach(Acc)
+```
+
+```{r, echo=FALSE}
+boxplot(pre~Group, main="Pre-Test",ylab="Scores")
+boxplot(post~Group, main= "Post-Test",ylab="Scores")
+```
+
+the boxplot figuers shows that, for the pre-test data, the median for both the control scores and the experimental scores are close indicating that the two populations are close. where for the post-test results, there is a difference in the median between the two populations. also the the post-test of the experiment group showed a narrower range compared with the post-test cosres of the control group.
+```{r, echo=FALSE, results='hide'}
+detach(Acc)
+```
+
+
+2- For Reading Automaticity
+```{r, echo=FALSE, results='hide'}
+attach(Auto)
+```
+
+```{r, echo=FALSE}
+boxplot(pre~Group, main="Pre-Test",ylab="Scores")
+boxplot(post~Group, main= "Post-Test",ylab="Scores")
+```
+
+for the pre-test scores, althougth the experiment group has a wider score ranges - engulfing the control group range -, but, the medians are still close. however, for the post-est, an observable differece in the median can be observed.
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto)
+```
+
+
+3- For Reading Prosody
+
+```{r, echo=FALSE, results='hide'}
+attach(Pros)
+```
+
+
+```{r, echo=FALSE}
+boxplot(pre~Group, main="Pre-Test",ylab="Scores")
+boxplot(post~Group, main= "Post-Test",ylab="Scores")
+```
+
+the boxplotfor the Prosody variable shows that, median for the pre-test scores are alost equal for both the control group and expeiment group. where a remarkable shif for the expeiment group scores was observed in the post-test results. 
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros)
+```
+
+
+```{r, echo=FALSE, results='hide'}
+## 2. Subsetting the data
+
+#First subsetting the data according to the following Groups
+#* 1. _Control / Experiment_. and this subset will be used to answer whether there is a difference within the groups
+#* 2. _Control compared with Experiment_ for pre and post test, to deciede whether there is a difference between the groups
+
+
+### A. Control / Experiment Susbsetting (difference within Groups)
+
+#### I. for the Accuracy test
+attach(Acc)
+```
+
+```{r, echo=FALSE,results='hide'}
+Acc2pCont <- Acc[Group=="Control", ] # for the control
+
+```
+```{r, echo=FALSE, results='hide'}
+Acc2pExp <- Acc[Group=="Experiment", ] #for the experiment
+
+```
+```{r, echo=FALSE, results='hide'}
+detach(Acc)
+```
+```{r, echo=FALSE, results='hide'}
+#### II. for the Automaticity test
+attach(Auto)
+```
+```{r, echo=FALSE, results='hide'}
+Auto2pCont <- Auto[Group=="Control", ] #for the control
+```
+```{r, echo=FALSE, results='hide'}
+Auto2pExp <- Auto[Group=="Experiment", ]#for the experiment
+
+```
+```{r, echo=FALSE, results='hide'}
+detach(Auto)
+```
+```{r, echo=FALSE, results='hide'}
+#### III. for the Prosopy test
+
+attach(Pros)
+```
+```{r, echo=FALSE, results='hide'}
+Pros2pCont <- Pros[Group=="Control", ]#for the control
+
+```
+```{r, echo=FALSE, results='hide'}
+Pros2pExp <- Pros[Group=="Experiment", ]#for the experiment
+
+```
+```{r, echo=FALSE, results='hide'}
+detach(Pros)
+```
+```{r, echo=FALSE, results='hide'}
+### B. Control Vs Experiment Susbsetting (difference Between Groups)
+
+
+#### I. for Accuracy
+attach(Acc)
+```
+```{r, echo=FALSE, results='hide'}
+AccPre <- Acc[ ,c("Group", "pre")]
+```
+```{r, echo=FALSE, results='hide'}
+AccPost <- Acc[ , c("Group", "post")]
+```
+```{r, echo=FALSE, results='hide'}
+detach(Acc)
+```
+```{r, echo=FALSE, results='hide'}
+#### II. For Automaticity
+attach(Auto)
+```
+```{r, echo=FALSE, results='hide'}
+AutoPre <- Auto[ ,c("Group", "pre")]
+```
+```{r, echo=FALSE, results='hide'}
+AutoPost <- Auto[ , c("Group", "post")]
+```
+```{r, echo=FALSE, results='hide'}
+detach(Auto)
+```
+```{r, echo=FALSE, results='hide'}
+#### III. For Prosody
+
+attach(Pros)
+```
+```{r, echo=FALSE, results='hide'}
+ProsPre <- Pros[ ,c("Group", "pre")]
+```
+```{r, echo=FALSE, results='hide'}
+ProsPost <- Pros[ , c("Group", "post")]
+```
+```{r, echo=FALSE, results='hide'}
+detach(Pros)
+```
+
+## 2- Normaility Tests
+the normality test were applied to check whether the data are normaly distributed or not. The normaility test was conducted through:
+* 1. Q-Q plot
+* 2. shapiro test
+* 2. Levene's test _ for variance homogeneity_ (for independet variables)
+* 3. difference between score normality test (for repeated variables)
+
+### A. Q-Q plot
+
+#### I. For Reading Accuracy 
+##### a. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pCont)
+```
+
+```{r, echo=FALSE}
+qqnorm(Acc2pCont$pre, main = "Normal Q-Q PLot Reading Acuracy Pre-test")
+abline(mean(Acc2pCont$pre),sd(Acc2pCont$pre))
+qqnorm(Acc2pCont$post, main = "Normal Q-Q PLot Reading Acuracy Post-test")
+abline(mean(Acc2pCont$post),sd(Acc2pCont$post))
+```
+
+the Q-Q plots for pre- and post-test for the reatding accuracy data shows that the data are normaly distributed
+
+```{r, echo=FALSE}
+hist(pre)
+hist(post)
+```
+
+However, from the histograms, the data are skwed.
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pCont)
+```
+
+##### b. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pExp)
+```
+
+```{r, echo=FALSE}
+qqnorm(Acc2pExp$pre, main = "Normal Q-Q PLot Reading Acuracy Pre-test")
+abline(mean(Acc2pExp$pre),sd(Acc2pExp$pre))
+qqnorm(Acc2pExp$post, main = "Normal Q-Q PLot Reading Acuracy Post-test")
+abline(mean(Acc2pExp$post),sd(Acc2pExp$post))
+```
+
+Q-Q plot for the pre- and post-test for the expperimental data shows that are quite alined and not normaly distributed
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pExp)
+```
+
+#### II. For Reading Automaticity
+##### a. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pCont)
+```
+
+```{r, echo=FALSE}
+qqnorm(Auto2pCont$pre, main = "Normal Q-Q PLot for Reading Automaticity Pre-test - Control")
+abline(mean(Auto2pCont$pre),sd(Auto2pCont$pre))
+qqnorm(Auto2pCont$post, main = "Normal Q-Q PLot for Reading Automaticity Post-test - Control")
+abline(mean(Auto2pCont$post),sd(Auto2pCont$post))
+```
+
+Q-Q plot for pre- and post-test for the Automaticity test of the control group would indicate that, for the pre- test, the data are normally distributed where for the post-test data it is not.
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pCont)
+```
+
+
+##### b. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pExp)
+```
+
+```{r, echo=FALSE}
+qqnorm(Auto2pExp$pre, main = "Normal Q-Q PLot for Reading Automaticity Pre-test - Experiment")
+abline(mean(Auto2pExp$pre),sd(Auto2pExp$pre))
+qqnorm(Auto2pExp$post, main = "Normal Q-Q PLot for Reading Automaticity Post-test - Experiment")
+abline(mean(Auto2pExp$post),sd(Auto2pExp$post))
+```
+
+Q-Q plot for reading Automaticity for the experiment group shows that, for pre- and post-test that data are not normaly distributed
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pExp)
+```
+
+
+#### III. For Reading Prosody
+##### a. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pCont)
+```
+
+```{r, echo=FALSE}
+qqnorm(Pros2pCont$pre, main = "Normal Q-Q PLot for Reading Prosody Pre-test - Control")
+abline(mean(Pros2pCont$pre),sd(Pros2pCont$pre))
+qqnorm(Pros2pCont$post, main = "Normal Q-Q PLot for Reading Prosody Post-test - Control")
+abline(mean(Pros2pCont$post),sd(Pros2pCont$post))
+```
+
+Q-Q plot shows that both pre and post-test are not normaly distributed
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pCont)
+```
+
+
+##### b. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pExp)
+```
+
+```{r, echo=FALSE}
+qqnorm(Pros2pExp$pre, main = "Normal Q-Q PLot for Reading Prosody Pre-test - Experiment")
+abline(mean(Pros2pExp$pre),sd(Pros2pExp$pre))
+qqnorm(Pros2pExp$post, main = "Normal Q-Q PLot for Reading Prosody Post-test - Experiment")
+abline(mean(Pros2pExp$post),sd(Pros2pExp$post))
+```
+
+Q-Q plot shows that both pre and post-test are not normaly distributed
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pExp)
+```
+
+
+### B. Shapiro Test
+The Shapiro–Wilk test is a test of normality in statistics.It is comparable in power to the other normality tests. The test rejects the hypothesis of normality when the p-value is less than or equal to 0.05.
+
+#### I. Reading Accuracy 
+##### a. _Control_
+Testing the normality of the pre- and post data of the control group
+```{r, echo=FALSE}
+attach(Acc2pCont)
+shapiro.test(Acc2pCont$pre)
+shapiro.test(Acc2pCont$post)
+detach(Acc2pCont)
+```
+According to the test, both pre and post-test scores of the control are noramly distributed since the p-values are > 0.05
+
+##### b. _Experiment_
+Testing the normality of the pre- and post data of the experiment group.
+
+```{r, echo=FALSE}
+attach(Acc2pExp)
+shapiro.test(Acc2pExp$pre)
+shapiro.test(Acc2pExp$post)
+```
+According to the test, both pre and post-test scores of the control are noramly distributed since the p-values are > 0.05
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pExp)
+```
+
+
+#### II. Reading Automaticity 
+##### a _Control_
+Testing the normality of the pre- and post data of the control group.
+
+```{r, echo=FALSE}
+attach(Auto2pCont)
+shapiro.test(Auto2pCont$pre)
+shapiro.test(Auto2pCont$post)
+```
+According to the test, both pre and post-test scores of the control are noramly distributed since the p-values are > 0.05
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pCont)
+```
+
+##### b. _Experiment_
+Testing the normality of the pre- and post data of the control group.
+
+```{r, echo=FALSE}
+attach(Auto2pExp)
+shapiro.test(Auto2pExp$pre)
+shapiro.test(Auto2pExp$post)
+```
+According to the test, both pre and post-test scores of the control are noramly distributed since the p-values are > 0.05
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pExp)
+```
+
+#### III. Reading Prosody 
+#### a. _Control_
+Testing the normality of the pre- and post data of the control group.
+
+```{r, echo=FALSE}
+attach(Pros2pCont)
+shapiro.test(Pros2pCont$pre)
+shapiro.test(Pros2pCont$post)
+```
+According to the test, both pre and post-test scores of the control are NOT noramly distributed since the p-values are < 0.05
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pCont)
+```
+
+#### II. _Experiment_
+Testing the normality of the pre- and post data of the control group.
+```{r, echo=FALSE}
+attach(Pros2pExp)
+shapiro.test(Pros2pExp$pre)
+shapiro.test(Pros2pExp$post)
+```
+According to the test, both pre and post-test scores of the control are NOT noramly distributed since the p-values are < 0.05
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pExp)
+```
+
+
+
+### c. Levene's Test for variance homogeneity
+
+Levene's test is used to test if two or more samples have equal variances. Equal variances across samples is called homogeneity of variance. this homogeneity is a pre-requisit for some statistical tests, for example the analysis of variance,  which assume that variances are equal across groups or samples. therefor, before deciding whether to go for t-test or other normality based- hypothesis test, The Levene test can be used to verify the normality assumption.
+
+```{r, echo=FALSE, results='hide'}
+#install.packages("car")
+library(car)
+```
+
+#### I. Reading Accuracy 
+##### a. _Pre-test_
+test homogeneity of variance of the control and experiment groups to decide whether they have equal variance
+
+```{r, echo=FALSE, results='hide'}
+attach(AccPre)
+```
+
+```{r, echo=FALSE}
+leveneTest(pre[Group=="Control"], pre[Group=="Experiment"])
+```
+since p-value > 0.05, data are homogenouse 
+
+```{r, echo=FALSE, results='hide'}
+detach(AccPre)
+```
+
+##### b. _post-test_
+```{r, echo=FALSE, results='hide'}
+attach(AccPost)
+```
+
+```{r, echo=FALSE}
+leveneTest(post[Group=="Control"], post[Group=="Experiment"])
+```
+since p-value > 0.05, data are homogenouse 
+
+```{r, echo=FALSE, results='hide'}
+detach(AccPost)
+```
+
+
+#### II. Reading Automaticity
+##### a. _pre-test_
+
+```{r, echo=FALSE}
+attach(AutoPre)
+leveneTest(pre[Group=="Control"], pre[Group=="Experiment"])
+```
+since p-value > 0.05, data are homogenouse 
+
+```{r, echo=FALSE, results='hide'}
+detach(AutoPre)
+```
+
+
+##### b. _post-test_
+```{r, echo=FALSE}
+attach(AutoPost)
+leveneTest(post[Group=="Control"], post[Group=="Experiment"])
+```
+since p-value < 0.05, data are NOT homogenouse 
+
+```{r, echo=FALSE, results='hide'}
+detach(AutoPost)
+```
+
+#### III. Reading Prosody 
+##### a. _pre-test_
+```{r, echo=FALSE}
+attach(ProsPre)
+leveneTest(pre[Group=="Control"], pre[Group=="Experiment"])
+```
+since p-value > 0.05, data are homogenouse 
+
+```{r, echo=FALSE, results='hide'}
+detach(ProsPre)
+```
+
+##### b.. _post-test_
+```{r, echo=FALSE}
+attach(ProsPost)
+leveneTest(post[Group=="Control"], post[Group=="Experiment"])
+```
+```{r, echo=FALSE, results='hide'}
+detach(ProsPost)
+```
+
+since p-value > 0.05, data are homogenouse 
+
+### C. Difference between scores normality test
+this test is used to assess the normailty distribution of repeated variables and used as a pre-normality test before selecting Wilcoxson's singled rank test
+
+#### I. Reading Accuracy
+##### a. _Control_
+
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pCont)
+```
+
+
+```{r, echo=FALSE}
+Acc2pCont$Diff <- (post-pre)
+str(Acc2pCont)
+```
+
+```{r, echo=FALSE}
+qqnorm(Acc2pCont$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Control")
+abline(mean(Acc2pCont$Diff),sd(Acc2pCont$Diff))
+```
+
+from the Q-Q plot, the data are NOT equally distributed
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pCont)
+```
+
+
+##### b. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pExp)
+```
+
+
+```{r, echo=FALSE, results='hide'}
+Acc2pExp$Diff <- (post-pre)
+str(Acc2pExp)
+```
+
+```{r, echo=FALSE}
+qqnorm(Acc2pExp$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Experiment")
+abline(mean(Acc2pExp$Diff),sd(Acc2pExp$Diff))
+```
+from the Q-Q plot, the data are NOT equally distributed, therefore, Wilcoxon signed sum test can be used for the hypthesis testing.
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pExp)
+```
+
+
+#### II. Reading Automaticity
+##### a. _Control_
+
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pCont)
+```
+
+
+```{r, echo=FALSE}
+Auto2pCont$Diff <- (post-pre)
+str(Auto2pCont)
+```
+
+
+```{r, echo=FALSE}
+qqnorm(Auto2pCont$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Experiment")
+abline(mean(Auto2pCont$Diff),sd(Auto2pCont$Diff))
+```
+from the Q-Q plot, the data are NOT equally distributed
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pCont)
+```
+
+
+##### b. _Experiment_
+
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pExp)
+```
+
+
+```{r, echo=FALSE}
+Auto2pExp$Diff <- (post-pre)
+str(Auto2pExp)
+```
+
+
+```{r, echo=FALSE}
+qqnorm(Auto2pExp$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Experiment")
+abline(mean(Auto2pExp$Diff),sd(Auto2pExp$Diff))
+```
+from the Q-Q plot, the data are NOT equally distributed
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pExp)
+```
+
+
+
+#### II. Reading Prosody
+##### b. _Control_
+
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pCont)
+```
+
+
+```{r, echo=FALSE}
+Pros2pCont$Diff <- (post-pre)
+str(Pros2pCont)
+```
+
+
+
+```{r, echo=FALSE}
+qqnorm(Pros2pCont$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Experiment")
+abline(mean(Pros2pCont$Diff),sd(Pros2pCont$Diff))
+```
+from the Q-Q plot, the data are NOT equally distributed
+
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pCont)
+```
+
+
+##### b. _Experiment_
+
+
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pExp)
+```
+
+
+```{r, echo=FALSE}
+Pros2pExp$Diff <- (post-pre)
+str(Pros2pExp)
+```
+
+
+```{r, echo=FALSE}
+qqnorm(Pros2pExp$Diff, main = "Normal Q-Q PLot Differece Pre-test and Post- Experiment")
+abline(mean(Pros2pExp$Diff),sd(Pros2pExp$Diff))
+```
+
+from the Q-Q plot, the data are NOT equally distributed
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pExp)
+```
+
+ACCORDING THE NORMALITY TESTS, SOME DATA SHOWED NON-NORMALITY BEHAVIOUR. ACCORDINGLY, NON-PARAMETERIC HYPOTHESIS TESTS WILL BE USED AS FOLLOW:
+* 1. MANN WHITNEY TEST: U- TEST
+TO TEST WHETHER THERE IS A DIFFERENCE BETWEEN THE CONTROL AND EXPERIMENT GROUPS REGARDING PRE- AND POST-TESTS SCORES (TWO INDEPENDENT POPUALTIONS)
+*2. WILCOXON SIGNED SUM RANKS TEST
+TO TEST WHETHER THERE IS A DIFFERNECE THE PRE- AND POST-TEST WITH EACH GROUP (REPEATED TEST)
+
+NOTES: FOR WILCOXSON SIGNED SUM OF RANKS, THE SAME METHOD FOR QUANTIFY THE EFFECT SIZE IS USED, HOWEVER Z-SCORE IS DIVIDED BY THE 2 SINCE IT IS A PAIRED "REPEATED" ANALYSIS.
+
+## 3- Hypothesis tests:
+### A. Mann Whitney U test
+the H0: is that there is no significant difference between the control and   Experimental groups for pre and post test.
+
+#### I. Hypothesis testing for the _Pre-Test_ (control Vs experiment)
+H0: no difference in the pre-test scores between the control and the Experiment groups (this is the required result)
+
+##### a.Reading Accuracy
+```{r, echo=FALSE, results='hide'}
+attach(AccPre)
+```
+
+```{r, echo=FALSE, results='hide'}
+MW_pre_Acc <-  wilcox.test(pre~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+
+according to test, there is a SIGNIFICANT DIFFERENCE (p-vale = 0.0323) in scores between the control and experiment group in the pre-test for the reading accuracy. although this is not what was expected, but it is still needed to quantify th effect "effect size", to decide whether this difference is large or small
+
+###### The effect size:
+Since there is a significant difference between the control and the experiment for the pre-test, 
+
+```{r, echo=FALSE}
+z_MW_pre_Acc <- qnorm(MW_pre_Acc$p.value)
+```
+
+```{r, echo=FALSE}
+z_MW_pre_Acc
+```
+
+```{r, echo=FALSE}
+r_MW_pre_Acc = abs(z_MW_pre_Acc)/sqrt(54)
+```
+
+```{r, echo=FALSE}
+r_MW_pre_Acc
+```
+
+from the effect size results, it was found that The effect is SAMLL (25.1% of the variations might be related to unknow variable)............NEED EXPLINATION HERE
+
+```{r, echo=FALSE, results='hide'}
+detach(AccPre)
+```
+
+
+
+##### b. Reading Automaticity (control Vs experiment)
+
+```{r, echo=FALSE, results='hide'}
+attach(AutoPre)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(AutoPre)
+```
+
+the results showed that for reading Aotumaticity, the results are is NO SIGNIFICANT DIFFERERNCE between the control and the experiment groupd in the pre-tests.
+
+##### c. Reading Prosody (control Vs experiment)
+
+```{r, echo=FALSE, results='hide'}
+attach(ProsPre)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(ProsPre)
+```
+
+the results showed that for reading Prosody, the results are is NO SIGNIFICANT DIFFERERNCE between the control and the experiment groupd in the pre-tests.
+
+
+#### II. Hypothesis testing for the _Post-Test_ (control Vs Experiment)
+H0: no difference in the pre-test scores between the control and the Experiment group (this is not the required result).if H0 was true, this will indicate that the intervention had no effect
+
+##### a. Reading Accuracy
+```{r, echo=FALSE, results='hide'}
+attach(AccPost)
+```
+
+```{r, echo=FALSE}
+MW_post_Acc <- wilcox.test(post~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+p-value=3.27e-10
+
+###### The effect size:
+Since there is a significant difference between the control and the experiment in  the pre-test scores, the effect size was calculated.
+
+```{r, echo=FALSE}
+z_MW_post_Acc <- qnorm(MW_post_Acc$p.value)
+```
+
+```{r, echo=FALSE}
+z_MW_post_Acc
+```
+
+```{r, echo=FALSE}
+r_MW_post_Acc = abs(z_MW_post_Acc)/sqrt(54)
+```
+
+```{r, echo=FALSE}
+r_MW_post_Acc
+```
+
+From the effect size results, the effect was found to be HIGH (84% of the variation is resulting from the intervention)............EXPLIAN MORE
+
+```{r, echo=FALSE, results='hide'}
+detach(AccPost)
+```
+
+##### b. Reading Automaticity
+
+```{r, echo=FALSE, results='hide'}
+attach(AutoPost)
+```
+
+```{r, echo=FALSE}
+MW_post_Auto <- wilcox.test(post~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+p-value= 1.95e-08
+
+##### The effect size:
+Since there is a significant difference between the control and the experiment in the pre-test scores. 
+
+```{r, echo=FALSE}
+z_MW_post_Auto <- qnorm(MW_post_Auto$p.value)
+```
+
+```{r, echo=FALSE}
+z_MW_post_Auto
+```
+
+```{r, echo=FALSE}
+r_MW_post_Auto = abs(z_MW_post_Auto)/sqrt(54)
+```
+
+```{r, echo=FALSE}
+r_MW_post_Auto
+```
+
+The effect is HIGH (74.7% of the variation is resulting from the intervention)............EXPLAIN MORE
+
+```{r, echo=FALSE, results='hide'}
+detach(AutoPost)
+```
+
+##### c. Reading Prosody
+
+```{r, echo=FALSE, results='hide'}
+attach(ProsPost)
+```
+
+```{r, echo=FALSE}
+MW_post_Pros <- wilcox.test(post~Group, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=F, exact=T, correct=T)
+```
+p-value = 1.36e-09
+
+##### The effect size:
+Since there is a significant difference between the control and the experiment in the pre-test.scores. 
+
+```{r, echo=FALSE}
+z_MW_post_Pros <- qnorm(MW_post_Pros$p.value)
+```
+
+```{r, echo=FALSE}
+z_MW_post_Pros
+```
+
+```{r, echo=FALSE}
+r_MW_post_Pros = abs(z_MW_post_Pros)/sqrt(54)
+```
+
+```{r, echo=FALSE}
+r_MW_post_Pros
+```
+
+The effect is HIGH (80.9% of the variation is resulting from the intervention)............EXPLAIN MORE
+
+```{r, echo=FALSE, results='hide'}
+detach(ProsPost)
+```
+
+
+### B. Wilcoxson's single Rank Test
+the test was used to test whether there is a significant difference in scores within groups before and after intervention.
+the test hypothesis was:
+the H0: is that ther is no difference between the pre and post test within the control or Experiments
+
+#### I.Reading Accuracy
+##### a. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pCont)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre, post,  mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=T)
+```
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pCont)
+```
+
+the results revealed that there is No SIGNIFICANT DIFFERENCE between scores before of after intervetion for the control group
+
+##### b. _Experiment_
+
+```{r, echo=FALSE, results='hide'}
+attach(Acc2pExp)
+```
+
+```{r, echo=FALSE}
+W_exp_Acc <- wilcox.test(pre, post,  mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=T)
+```
+
+the results showed that there a SIGNIFICANT DIFFERENCE (7.36e-06) in scores before and after the intervention. to quatify the effect, effect size was calculated
+
+###### The effect size:
+Since there is a significant difference between the pre-test scores of the experiment 
+
+```{r, echo=FALSE}
+z_W_exp_Acc <- (qnorm(W_exp_Acc$p.value))/2
+```
+
+```{r, echo=FALSE}
+z_W_exp_Acc
+```
+
+```{r, echo=FALSE}
+r_W_exp_Acc = abs(z_W_exp_Acc)/sqrt(54)
+```
+
+```{r, echo=FALSE}
+r_W_exp_Acc
+```
+
+The effect is LOW (29.5% of the variation is resulting from the intervention). Although the Wilcoxon test showed that the difference between pre and post test are highly significant, the effect size of the intervention was small. this is because the significance test is dependent on:
+*1- sample size
+*2- effect size
+accordingly, word 'significance' is often used to mean 'statistical significance which is the likelihood that the difference between the two groups could just be an accident of sampling. afterall, effect size is an estimate for the true effect size!!!
+
+```{r, echo=FALSE, results='hide'}
+detach(Acc2pExp)
+```
+
+
+#### II. Reading Automaticity
+
+##### a. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pCont)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre, post, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=T)
+```
+there was no SIGNIFICANT DIFFERENCE between pre- and post test for the control group regarding the Automaticity test
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pCont)
+```
+
+
+##### b. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Auto2pExp)
+```
+
+```{r, echo=FALSE}
+W_exp_Auto <- wilcox.test(pre, post, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=T)
+```
+p-value = 0.00049
+
+##### The effect size:
+Since there is a significant difference between the pre-test scores of the experiment 
+
+```{r, echo=FALSE}
+z_W_exp_Auto <- (qnorm(W_exp_Auto$p.value))/2
+```
+
+
+```{r, echo=FALSE}
+z_W_exp_Auto
+```
+
+```{r, echo=FALSE}
+r_W_exp_Auto = abs(z_W_exp_Auto)/sqrt(54)
+```
+
+```{r, echo=FALSE}
+r_W_exp_Auto
+```
+
+The effect is LOW (22.4% of the variation is resulting from the intervention)............
+
+```{r, echo=FALSE, results='hide'}
+detach(Auto2pExp)
+```
+
+
+
+#### III. Reading Prosody
+
+##### a. _Control_
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pCont)
+```
+
+```{r, echo=FALSE}
+wilcox.test(pre, post, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=T)
+```
+there was no SIGNIFICANT DIFFERENCE between pre- and post test for the control group regarding the Automaticity test
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pCont)
+```
+
+
+##### b. _Experiment_
+```{r, echo=FALSE, results='hide'}
+attach(Pros2pExp)
+```
+
+```{r, echo=FALSE}
+W_exp_Pros <- wilcox.test(pre, post, mu=0, alt="two.sided",conf.int=T, conf.level=0.95, paired=T)
+```
+p-value = 7.27e-06
+
+#### The effect size:
+Since there is a significant difference between the pre-test scores of the experiment 
+
+```{r, echo=FALSE}
+z_W_exp_Pros <- (qnorm(W_exp_Pros$p.value))/2
+```
+
+
+```{r, echo=FALSE}
+z_W_exp_Pros
+```
+
+```{r, echo=FALSE}
+r_W_exp_Pros = abs(z_W_exp_Pros)/sqrt(54)
+```
+
+```{r, echo=FALSE}
+r_W_exp_Pros
+```
+
+The effect is LOW (29.5% of the variation is resulting from the intervention)............
+
+```{r, echo=FALSE, results='hide'}
+detach(Pros2pExp)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
